@@ -37,15 +37,21 @@ def train(
     for batch_idx, (input, label) in enumerate(train_loader, start=start_step + 1):
         if batch_idx > cfg.num_steps:
             break
+
+        from torch.utils.flop_counter import FlopCounterMode
+        flop_counter = FlopCounterMode()
+
+
         input = input.to(local_rank)
         label = label.to(local_rank)
 
         optimizer.zero_grad()
-        output = model(input)
-        ce_loss = torch.nn.CrossEntropyLoss()
-        loss = ce_loss(output.view(-1, output.size(-1)), label.view(-1).long())
+        with flop_counter:
+            output = model(input)
+            ce_loss = torch.nn.CrossEntropyLoss()
+            loss = ce_loss(output.view(-1, output.size(-1)), label.view(-1).long())
 
-        loss.backward()
+            loss.backward()
         ddp_stats[1] += model.clip_grad_norm_(cfg.grad_clip_thresh).item()
         optimizer.step()
         scheduler.step()

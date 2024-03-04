@@ -54,12 +54,8 @@ def main(**kwargs):
     llama_config = get_model_config(cfg.model_variant)
 
     if cfg.low_cpu_fsdp:
-        if rank == 0:
+        with torch.device("meta"):
             model = LLaMA(llama_config)
-            model.reset_parameters()
-        else:
-            with torch.device("meta"):
-                model = LLaMA(llama_config)
     else:
         model = LLaMA(llama_config)
         model.reset_parameters()
@@ -78,6 +74,37 @@ def main(**kwargs):
     if rank == 0:
         print("Datasets constructed!")
 
+    # TP
+    from torch.distributed._tensor import init_device_mesh
+    from torch.distributed.tensor.parallel import (
+        parallelize_module,
+        ColwiseParallel,
+        RowwiseParallel,
+    )
+    if cfg.tp_size > 1:
+        device_mesh = init_device_mesh("cuda", (world_size // cfg.tp_size, cfg.tp_size), mesh_dim_names=("dp", "tp"))
+        tp_mesh = device_mesh["tp"]
+        dp_mesh = device_mesh["dp"]
+        blocks = model.get_submodule("layers")
+        for i, block in enumerate(blocks):
+            if rank == 0:
+                print("parallelization of block:", i)
+            parallelize_module(
+                module=block,
+                device_mesh=tp_mesh,
+                parallelize_plan={
+                    "attn.query": ColwiseParallel(),
+                    "attn.key": ColwiseParallel(),
+                    "attn.value": ColwiseParallel(),
+                    "attn.dense": RowwiseParallel(),
+                    "ff_sub_layer.w1": ColwiseParallel(),
+                    "ff_sub_layer.wg": ColwiseParallel(),
+                    "ff_sub_layer.w2": RowwiseParallel(),
+                }
+            )
+    else:
+        dp_mesh = None
+
     # FSDP
     model = FSDP(
         model,
@@ -93,6 +120,7 @@ def main(**kwargs):
             if cfg.low_cpu_fsdp
             else None
         ),
+        device_mesh=dp_mesh,
     )
 
     # fsdp activation checkpointing

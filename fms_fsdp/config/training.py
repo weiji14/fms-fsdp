@@ -24,6 +24,9 @@ class train_config:
     sharding_strategy: str = "hsdp"
     low_cpu_fsdp: bool = False
 
+    # tp
+    tp_size: int = 8
+
     # training spec
     seed: int = 2023
     batch_size: int = 2

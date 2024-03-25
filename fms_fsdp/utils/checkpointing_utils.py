@@ -202,14 +202,14 @@ class Checkpointer:
             else:
                 # Load model
                 with FSDP.state_dict_type(model, StateDictType.SHARDED_STATE_DICT):
-                    state_dict = model.state_dict()
+                    state_dict = model._orig_mod.state_dict()
                     model_ckp = {"model_state": state_dict}
                     load_state_dict(
                         state_dict=model_ckp,
                         storage_reader=FileSystemReader(load_path),
                         planner=DefaultLoadPlanner(),
                     )
-                    model.load_state_dict(model_ckp["model_state"])
+                    model._orig_mod.load_state_dict(model_ckp["model_state"])
                 model.to(self.local_rank)
                 self.report(model_load_time=time.time() - model_load_time)
                 step = 0
@@ -225,12 +225,12 @@ class Checkpointer:
                     optim_load_time = time.time()
                     with FSDP.state_dict_type(model, StateDictType.SHARDED_STATE_DICT):
                         optim_state = load_sharded_optimizer_state_dict(
-                            model_state_dict=model.state_dict(),
+                            model_state_dict=model._orig_mod.state_dict(),
                             optimizer_key="optimizer_state",
                             storage_reader=FileSystemReader(load_path),
                         )
                     flattened_osd = FSDP.optim_state_dict_to_load(
-                        model, optimizer, optim_state["optimizer_state"]
+                        model._orig_mod, optimizer, optim_state["optimizer_state"]
                     )
                     optimizer.load_state_dict(flattened_osd)
                     self.report(optimizer_load_time=time.time() - optim_load_time)

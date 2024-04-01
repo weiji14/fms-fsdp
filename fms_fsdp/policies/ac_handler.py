@@ -1,6 +1,6 @@
 from functools import partial
 
-from fms.models.llama import LLaMABlock
+from transformers.models.mixtral.modeling_mixtral import MixtralDecoderLayer
 from torch.distributed.algorithms._checkpoint.checkpoint_wrapper import (
     CheckpointImpl,
     apply_activation_checkpointing,
@@ -51,7 +51,7 @@ def apply_fsdp_checkpointing(model, p):
         nonlocal block_idx
         nonlocal cut_off
 
-        if isinstance(submodule, LLaMABlock):
+        if isinstance(submodule, MixtralDecoderLayer):
             block_idx += 1
             if block_idx * p >= cut_off:
                 cut_off += 1

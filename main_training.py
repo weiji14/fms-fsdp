@@ -21,6 +21,8 @@ from fms_fsdp.utils.train_utils import (
     train,
 )
 
+from transformers import AutoModelForCausalLM, AutoConfig
+
 
 def main(**kwargs):
     # get configs
@@ -53,14 +55,14 @@ def main(**kwargs):
         param_init_fn,
     ) = get_policies(cfg, rank)
 
-    # get fms model
-    llama_config = get_model_config(cfg.model_variant)
-    if cfg.low_cpu_fsdp:
-        with torch.device("meta"):
-            model = LLaMA(llama_config)
+    # get model
+    model_name = "mistralai/Mixtral-8x7B-v0.1"
+    if rank == 0:
+        model = AutoModelForCausalLM.from_pretrained(model_name, low_cpu_mem_usage=True)
     else:
-        model = LLaMA(llama_config)
-        model.reset_parameters()
+        model_config = AutoConfig.from_pretrained(model_name)
+        with torch.device("meta"):
+            model = AutoModelForCausalLM.from_config(model_config)
 
     if rank == 0:
         total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)

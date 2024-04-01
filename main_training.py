@@ -86,8 +86,8 @@ def main(**kwargs):
         sharding_strategy=sharding_strategy_policy,
         use_orig_params=cfg.use_torch_compile,
         device_id=torch.cuda.current_device(),
+        sync_module_states=True,
         limit_all_gathers=True,
-        param_init_fn=param_init_fn,
     )
     # we need this post-fsdp call to avoid graph break with torch.compile, until we figure out a better solution.
     model.rot_emb.compute_freqs_cis(

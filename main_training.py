@@ -87,6 +87,9 @@ def main(**kwargs):
         use_orig_params=cfg.use_torch_compile,
         device_id=torch.cuda.current_device(),
         sync_module_states=True,
+        param_init_fn=lambda module: (
+            module.to_empty(device=torch.device("cuda"), recurse=False)
+        ),
         limit_all_gathers=True,
     )
     # we need this post-fsdp call to avoid graph break with torch.compile, until we figure out a better solution.

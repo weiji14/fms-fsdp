@@ -1,6 +1,6 @@
 from functools import partial
 
-from transformers.models.mixtral.modeling_mixtral import MixtralDecoderLayer
+from transformers.models.mistral.modeling_mistral import MistralDecoderLayer
 from torch.distributed.algorithms._checkpoint.checkpoint_wrapper import (
     CheckpointImpl,
     apply_activation_checkpointing,
@@ -10,7 +10,7 @@ from torch.distributed.algorithms._checkpoint.checkpoint_wrapper import (
 
 non_reentrant_wrapper = partial(
     checkpoint_wrapper,
-    checkpoint_impl=CheckpointImpl.REENTRANT,
+    checkpoint_impl=CheckpointImpl.NO_REENTRANT,
 )
 
 
@@ -51,7 +51,7 @@ def apply_fsdp_checkpointing(model, p):
         nonlocal block_idx
         nonlocal cut_off
 
-        if isinstance(submodule, MixtralDecoderLayer):
+        if isinstance(submodule, MistralDecoderLayer):
             block_idx += 1
             if block_idx * p >= cut_off:
                 cut_off += 1

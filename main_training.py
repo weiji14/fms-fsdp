@@ -56,7 +56,7 @@ def main(**kwargs):
     ) = get_policies(cfg, rank)
 
     # get model
-    model_name = "mistralai/Mixtral-8x7B-v0.1"
+    model_name = "mistralai/Mistral-7B-v0.1"
     if rank == 0:
         model = AutoModelForCausalLM.from_pretrained(model_name, low_cpu_mem_usage=True)
     else:

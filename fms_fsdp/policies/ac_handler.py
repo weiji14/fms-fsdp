@@ -9,7 +9,7 @@ from torch.distributed.algorithms._checkpoint.checkpoint_wrapper import (
 
 non_reentrant_wrapper = partial(
     checkpoint_wrapper,
-    checkpoint_impl=CheckpointImpl.NO_REENTRANT,
+    checkpoint_impl=CheckpointImpl.REENTRANT,
 )
 
 

@@ -60,6 +60,7 @@ def main(**kwargs):
 
     # get hf model
     model_name = "codellama/CodeLlama-34b-hf"
+    model_name = "/lustre/llama_weights/70B"
     if rank == 0:
         model = AutoModelForCausalLM.from_pretrained(model_name, low_cpu_mem_usage=True)
     else:

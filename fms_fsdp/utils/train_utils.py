@@ -211,7 +211,7 @@ def get_policies(cfg, rank, block):
         mixed_precision_policy = None
 
     # wrapping policy
-    wrapping_policy = get_wrapper(block)
+    wrapping_policy = get_wrapper(cfg, block)
 
     # sharding strategy
     if cfg.sharding_strategy == "fsdp":

@@ -58,7 +58,7 @@ def get_data_loader(cfg, rank, world_size):
         data_seq = torch.IntTensor(data_seq)
         t = data_seq.clone()[1:]
         data_seq = data_seq[:-1]
-        t[:prompt_len] = -100
+        t[:prompt_len] = 128005
         return data_seq, t
 
     # Base streaming dataset. Returns doc chunks in sequence.

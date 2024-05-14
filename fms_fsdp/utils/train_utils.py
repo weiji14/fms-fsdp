@@ -82,6 +82,7 @@ def train(
         print(input)
         print(label)
         time.sleep(60)
+        continue
         if batch_idx > cfg.num_steps:
             break
         input = input.to(local_rank)

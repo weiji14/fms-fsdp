@@ -93,10 +93,10 @@ def get_data_loader(cfg, rank, world_size):
         data,
         cfg.ckpt_load_path,
         cfg.checkpoint_interval,
-        cfg.batch_size,
+        1,
         cfg.ckpt_save_path,
     )
-    return torch.utils.data.DataLoader(data, num_workers=1, batch_size=cfg.batch_size)
+    return torch.utils.data.DataLoader(data, num_workers=1, batch_size=1)
 
 
 def parse_data_args(datas, weights):

@@ -78,9 +78,10 @@ def train(
     start = time.time()
     loop_start = time.time()
     for batch_idx, (input, label) in enumerate(train_loader, start=start_step + 1):
-        torch.set_printoptions(threshold=10_000)
-        print(input)
-        print(label)
+        if rank == 0:
+            torch.set_printoptions(threshold=10_000)
+            print(input)
+            print(label)
         time.sleep(60)
         continue
         if batch_idx > cfg.num_steps:

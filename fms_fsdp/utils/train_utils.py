@@ -82,8 +82,8 @@ def train(
     for batch_idx, (input, label) in enumerate(train_loader, start=start_step + 1):
         if rank == 0:
             torch.set_printoptions(threshold=10_000)
-            print(tokenizer.decode(input))
-            print(tokenizer.decode(label))
+            print(tokenizer.decode(input[0]))
+            print(tokenizer.decode(label[0]))
         time.sleep(60)
         continue
         if batch_idx > cfg.num_steps:

@@ -2,6 +2,7 @@ import os
 from dataclasses import asdict
 from functools import partial
 
+from transformers import AutoTokenizer
 
 try:
     import packaging.version
@@ -77,11 +78,12 @@ def train(
 
     start = time.time()
     loop_start = time.time()
+    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B")
     for batch_idx, (input, label) in enumerate(train_loader, start=start_step + 1):
         if rank == 0:
             torch.set_printoptions(threshold=10_000)
-            print(input)
-            print(label)
+            print(tokenizer.decode(input))
+            print(tokenizer.decode(label))
         time.sleep(60)
         continue
         if batch_idx > cfg.num_steps:

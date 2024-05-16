@@ -83,6 +83,10 @@ def train(
     for batch_idx, (input, label) in enumerate(train_loader, start=start_step + 1):
         if rank == 0:
             torch.set_printoptions(threshold=10_000)
+            print(input[0])
+            print("==============================================================================================")
+            print(label[0])
+            print("==============================================================================================")
             print(tokenizer.decode(input[0]))
             print("==============================================================================================")
             print(tokenizer.decode(label[0]))

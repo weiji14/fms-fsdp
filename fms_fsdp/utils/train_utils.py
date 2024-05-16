@@ -79,6 +79,7 @@ def train(
     start = time.time()
     loop_start = time.time()
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B")
+    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
     for batch_idx, (input, label) in enumerate(train_loader, start=start_step + 1):
         if rank == 0:
             torch.set_printoptions(threshold=10_000)

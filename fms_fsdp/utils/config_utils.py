@@ -55,6 +55,13 @@ def get_model_config(model_variant):
             nheads=16,
             nlayers=24,
         )
+    elif model_variant == "llama2_1.4b_kv":
+        llama_config = LLaMAConfig(
+            emb_dim=2048,
+            nheads=16,
+            nlayers=24,
+            kvheads=8,
+        )
     elif model_variant == "llama3_8b":
         llama_config = LLaMAConfig(
             src_vocab_size=128256,

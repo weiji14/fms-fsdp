@@ -130,9 +130,7 @@ def main(
 ):
     print("Initializing model...")
     llama_config = get_model_config(model_variant)
-    with torch.device("meta"):
-        model = LLaMA(llama_config)
-    model.to_empty(device="cpu")
+    model = LLaMA(llama_config)
 
     print(f"Reading state dict from {load_path}")
     if not compiled:

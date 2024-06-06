@@ -112,7 +112,7 @@ def convert_to_hf(model: LLaMA, model_variant, is_old_fms) -> LlamaForCausalLM:
 
             k = oss_hf_layer.self_attn.k_proj.weight.data
             k = (
-                k.view(hf_config.nheads, -1, 2, k.size(1))
+                k.view(hf_config.nheads if hf_config.kvheads == 0 else hf_config.kvheads, -1, 2, k.size(1))
                 .transpose(1, 2)
                 .reshape(*k.size())
             )

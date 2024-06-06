@@ -88,7 +88,7 @@ def convert_to_hf(model: LLaMA, model_variant, is_old_fms) -> LlamaForCausalLM:
             else:
                 wg1_fused = fms_hf_layer.ff_sub_layer.wg1_fused.weight
                 wg_splits = [wg1_fused.size(0) // 2, wg1_fused.size(0) // 2]
-                w1, wg = torch.split(
+                wg, w1 = torch.split(
                     fms_hf_layer.ff_sub_layer.wg1_fused.weight, wg_splits, dim=0
                 )
                 oss_hf_layer.mlp.gate_proj.weight.copy_(wg)

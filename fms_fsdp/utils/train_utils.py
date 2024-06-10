@@ -134,8 +134,8 @@ def train(
                 print("gradient norm:", current_gnorm)
                 print(input[0][:10])
                 print(label[0][:10])
-                print(model.layers[0].attn.in_proj.qkv_fused.weight[:5, :5])
-                print(model.layers[0].attn.in_proj.qkv_fused.weight.grad[:5, :5])
+                print(model.layers[0].attn.in_proj.qkv_fused.weight)
+                # print(model.layers[0].attn.in_proj.qkv_fused.weight.grad[:5, :5])
 
                 if cfg.tracker:
                     vals_to_track = {

@@ -85,24 +85,24 @@ def train(
 
         optimizer.zero_grad()
         torch.set_printoptions(50)
-        if rank == 0:
-            print(model.layers[6].attn.in_proj.qkv_fused.weight[:10])
+        # if rank == 0:
+        #     print(model.layers[6].attn.in_proj.qkv_fused.weight[:10])
         output = model(input, attn_algorithm="flash")
         output = output.logits if hasattr(output, "logits") else output
-        if rank == 0:
-            print(output[0, :5, :5])
+        # if rank == 0:
+        #     print(output[0, :5, :5])
         ce_loss = torch.nn.CrossEntropyLoss()
         loss = ce_loss(output.view(-1, output.size(-1)), label.view(-1).long())
-        if rank == 0:
-            print(loss)
+        # if rank == 0:
+        #     print(loss)
 
         loss.backward()
-        if rank == 0:
-            print(model.layers[6].attn.in_proj.qkv_fused.weight.grad[:10])
-        # ddp_stats[1] += model.clip_grad_norm_(cfg.grad_clip_thresh).item()
+        # if rank == 0:
+        #     print(model.layers[6].attn.in_proj.qkv_fused.weight.grad[:10])
+        ddp_stats[1] += model.clip_grad_norm_(cfg.grad_clip_thresh).item()
         optimizer.step()
-        if rank == 0:
-            print(model.layers[6].attn.in_proj.qkv_fused.weight[:10])
+        # if rank == 0:
+        #     print(model.layers[6].attn.in_proj.qkv_fused.weight[:10])
         scheduler.step()
 
         ddp_stats[0] += loss.item()
@@ -142,10 +142,22 @@ def train(
 
                 print("step:", batch_idx)
                 print("loss:", current_loss)
+                print("LR:", current_lr)
+                print("tokens seen:", total_tokens_seen)
                 print("gradient norm:", current_gnorm)
-                print(model.layers[0].attn.in_proj.qkv_fused.weight.shape)
-                print(model.layers[0].attn.in_proj.qkv_fused.weight[:10])
-                print(model.layers[0].attn.in_proj.qkv_fused.weight.grad[:10])
+                print("reserved memory:", reserved_mem)
+                print("allocated memory:", allocated_mem)
+                print("current step time:", current_step_time)
+                print("overall step time:", overall_step_time)
+                print("current token per gpu per sec:", current_throughput)
+                print("overall token per gpu per sec:", overall_throughput)
+                print(
+                    "overall token per day:",
+                    int(new_tokens_seen / elapsed_time * 3600 * 24),
+                )
+                # print(model.layers[0].attn.in_proj.qkv_fused.weight.shape)
+                # print(model.layers[0].attn.in_proj.qkv_fused.weight[:10])
+                # print(model.layers[0].attn.in_proj.qkv_fused.weight.grad[:10])
 
                 if cfg.tracker:
                     vals_to_track = {

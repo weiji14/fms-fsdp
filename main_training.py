@@ -28,7 +28,8 @@ def main(**kwargs):
     update_config(cfg, **kwargs)
 
     # ensure reproducibility
-    torch.backends.cudnn.deterministic = True
+    # torch.backends.cudnn.deterministic = True
+    torch.use_deterministic_algorithms(True)
     torch.cuda.manual_seed(cfg.seed)
     torch.manual_seed(cfg.seed)
 

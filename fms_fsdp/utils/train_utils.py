@@ -87,7 +87,7 @@ def train(
         torch.set_printoptions(50)
         # if rank == 0:
         #     print(model.layers[6].attn.in_proj.qkv_fused.weight[:10])
-        output = model(input, attn_algorithm="flash")
+        output = model(input, attn_algorithm="math")
         output = output.logits if hasattr(output, "logits") else output
         # if rank == 0:
         #     print(output[0, :5, :5])

@@ -84,14 +84,20 @@ def train(
         label = label.to(local_rank)
 
         optimizer.zero_grad()
+        torch.set_printoptions(20)
+        print(model.layers[6].attn.in_proj.qkv_fused.weight[:10])
         output = model(input)
         output = output.logits if hasattr(output, "logits") else output
+        print(output[:10])
         ce_loss = torch.nn.CrossEntropyLoss()
         loss = ce_loss(output.view(-1, output.size(-1)), label.view(-1).long())
+        print(loss)
 
         loss.backward()
+        print(model.layers[6].attn.in_proj.qkv_fused.weight.grad[:10])
         # ddp_stats[1] += model.clip_grad_norm_(cfg.grad_clip_thresh).item()
         optimizer.step()
+        print(model.layers[6].attn.in_proj.qkv_fused.weight[:10])
         scheduler.step()
 
         ddp_stats[0] += loss.item()
@@ -129,7 +135,6 @@ def train(
                     device=torch.cuda.current_device()
                 )
 
-                torch.set_printoptions(20)
                 print("step:", batch_idx)
                 print("loss:", current_loss)
                 print("gradient norm:", current_gnorm)

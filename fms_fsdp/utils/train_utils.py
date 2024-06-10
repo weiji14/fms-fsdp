@@ -99,7 +99,7 @@ def train(
         loss.backward()
         # if rank == 0:
         #     print(model.layers[6].attn.in_proj.qkv_fused.weight.grad[:10])
-        ddp_stats[1] += model.clip_grad_norm_(cfg.grad_clip_thresh).item()
+        # ddp_stats[1] += model.clip_grad_norm_(cfg.grad_clip_thresh).item()
         optimizer.step()
         # if rank == 0:
         #     print(model.layers[6].attn.in_proj.qkv_fused.weight[:10])

@@ -129,13 +129,13 @@ def train(
                     device=torch.cuda.current_device()
                 )
 
+                torch.set_printoptions(20)
                 print("step:", batch_idx)
                 print("loss:", current_loss)
                 print("gradient norm:", current_gnorm)
-                print(input[0][:10])
-                print(label[0][:10])
-                print(model.layers[0].attn.in_proj.qkv_fused.weight)
-                # print(model.layers[0].attn.in_proj.qkv_fused.weight.grad[:5, :5])
+                print(model.layers[0].attn.in_proj.qkv_fused.weight.shape)
+                print(model.layers[0].attn.in_proj.qkv_fused.weight[:10])
+                print(model.layers[0].attn.in_proj.qkv_fused.weight.grad[:10])
 
                 if cfg.tracker:
                     vals_to_track = {

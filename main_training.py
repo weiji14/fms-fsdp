@@ -29,7 +29,14 @@ def main(**kwargs):
 
     # ensure reproducibility
     # torch.backends.cudnn.deterministic = True
+    import numpy as np
+    import random
+    np.random.seed(cfg.seed)
+    random.seed(cfg.seed)
+    torch.cuda.manual_seed_all(cfg.seed)
+    torch.backends.cudnn.deterministic = True
     torch.use_deterministic_algorithms(True)
+
     torch.cuda.manual_seed(cfg.seed)
     torch.manual_seed(cfg.seed)
 

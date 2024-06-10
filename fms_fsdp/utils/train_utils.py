@@ -84,7 +84,7 @@ def train(
         label = label.to(local_rank)
 
         optimizer.zero_grad()
-        torch.set_printoptions(20)
+        torch.set_printoptions(30)
         if rank == 0:
             print(model.layers[6].attn.in_proj.qkv_fused.weight[:10])
         output = model(input)

@@ -49,7 +49,6 @@ def train(
                     wandb.init(
                         project=project_name,
                         dir=tracker_dir,
-                        resume="allow",
                         id=run_id,
                         resume_from=f"{run_id}?_step={start_step}"
                         if start_step > 0

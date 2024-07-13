@@ -103,7 +103,7 @@ def get_model_config(model_variant):
             "attn_layer_idx": [9, 18, 27],
             "attn_cfg": {
                 "causal": True,
-                "d_conv": 0,
+                "d_conv": 4,
                 "head_dim": 128,
                 "num_heads": 32,
                 "num_heads_kv": 8,

@@ -1,6 +1,10 @@
 import math
 import os
 
+rank = int(os.environ["RANK"])
+if rank == 0:
+    os.environ["TORCH_COMPILE_DEBUG"] = "1"
+
 import fire
 import torch
 import torch.optim as optim
@@ -63,20 +67,12 @@ def main(**kwargs):
 
     if rank == 0:
         print(f"--> running with these configs {cfg}")
-        print("Setting env variables")
-        os.environ['TORCH_COMPILE_DEBUG'] = '1'
-        os.environ['TORCH_COMPILE_DEBUG_DIR'] = '/gpfs/divykum2'
 
     # some setups
     setup()
     torch.cuda.set_device(local_rank)
     torch.cuda.empty_cache()
     setup_environ_flags()
-
-    # printing env variables
-    env_vars = os.environ
-    for key, value in env_vars.items():
-        print(f"{key}: {value}")
 
     # get policy
     block = Block
@@ -130,6 +126,10 @@ def main(**kwargs):
     if cfg.use_torch_compile:
         if rank == 0:
             print(f"--> enabling torch compile...")
+            print("Setting env variables")
+            os.environ['TORCH_COMPILE_DEBUG'] = '1'
+            os.environ['TORCH_COMPILE_DEBUG_DIR'] = '/gpfs/divykum2'
+            torch._dynamo.config.debug_dir_root = torch._dynamo.config.default_debug_dir_root()
 
         model = torch.compile(model)
 

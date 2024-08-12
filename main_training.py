@@ -63,6 +63,9 @@ def main(**kwargs):
 
     if rank == 0:
         print(f"--> running with these configs {cfg}")
+        print("Setting env variables")
+        os.environ['TORCH_COMPILE_DEBUG'] = '1'
+        os.environ['TORCH_COMPILE_DEBUG_DIR'] = '/gpfs/divykum2'
 
     # some setups
     setup()
@@ -122,9 +125,6 @@ def main(**kwargs):
     if cfg.use_torch_compile:
         if rank == 0:
             print(f"--> enabling torch compile...")
-            print("Setting env variables")
-            os.environ['TORCH_COMPILE_DEBUG'] = '1'
-            os.environ['TORCH_COMPILE_DEBUG_DIR'] = '/gpfs/divykum2'
 
         model = torch.compile(model)
 

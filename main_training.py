@@ -73,6 +73,11 @@ def main(**kwargs):
     torch.cuda.empty_cache()
     setup_environ_flags()
 
+    # printing env variables
+    env_vars = os.environ
+    for key, value in env_vars.items():
+        print(f"{key}: {value}")
+
     # get policy
     block = Block
     (

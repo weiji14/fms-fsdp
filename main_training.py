@@ -1,6 +1,7 @@
 import math
 import os
 
+# setting TORCH_COMPILE_DEBUG for compile graphs
 rank = int(os.environ["RANK"])
 if rank == 0:
     os.environ["TORCH_COMPILE_DEBUG"] = "1"
@@ -126,10 +127,6 @@ def main(**kwargs):
     if cfg.use_torch_compile:
         if rank == 0:
             print(f"--> enabling torch compile...")
-            print("Setting env variables")
-            os.environ['TORCH_COMPILE_DEBUG'] = '1'
-            os.environ['TORCH_COMPILE_DEBUG_DIR'] = '/gpfs/divykum2'
-            torch._dynamo.config.debug_dir_root = torch._dynamo.config.default_debug_dir_root()
 
         model = torch.compile(model)
 
